@@ -8,6 +8,16 @@ import {ref} from 'vue'
 const Account=ref("");
 const Password=ref("");
 async function try_login(){
+
+    if(Account.value.length>30||Account.value.length<10){
+        alert("账号长度错误");
+        return;
+    }
+    if(Password.value.length>30||Password.value.length<15){
+        alert("密码错误");
+        return;
+    }
+
     let data = new FormData();
     data.append('account',Account.value);
     data.append('password',Password.value);
