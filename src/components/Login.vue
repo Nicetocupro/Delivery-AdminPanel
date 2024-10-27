@@ -8,16 +8,11 @@ import {ref} from 'vue'
 const Account=ref("");
 const Password=ref("");
 async function try_login(){
-
-    
-
     let data = new FormData();
     data.append('account',Account.value);
     data.append('password',Password.value);
-
     try {
         const response = await instance.post(`/admin/login`, data);
-
         if (response.data.code === 200) {
             if(response.data.msg === "ok"){
                 router.push('/Home');
@@ -28,9 +23,8 @@ async function try_login(){
         } else {
             alert(response.data.msg);
         }
-        } catch (error) {alert(error.message);}
+    } catch (error) {alert(error.message);}
 }
-
 </script>
 
 <template>

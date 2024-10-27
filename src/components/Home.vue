@@ -2,6 +2,7 @@
     import Menu from 'primevue/menu'
     import {ref} from 'vue'
     import instance from '../http.js';
+    import router from '../router/router.js'
     const items=ref([
         {label:'Home',icon:'pi pi-home'},
         {label:'About',icon:'pi pi-info-circle'},
@@ -34,8 +35,21 @@
         {label:'About',icon:'pi pi-info-circle'},
         {label:'Contact',icon:'pi pi-envelope'},
     ])
-    function logout(){
-        ;
+    async function logout(){
+        window.localStorage.setItem("access_token","");
+        try {
+            const response = await instance.post(`/admin/logout`);
+            if (response.data.code === 200) {
+                if(response.data.msg === "ok"){
+                    window.localStorage.setItem("access_token","");
+                }else{
+                    alert(response.data.msg);
+                }
+            } else {
+                alert(response.data.msg);
+            }
+        } catch (error) {alert(error.message);}
+        router.push('/');
     }
 </script>
 
