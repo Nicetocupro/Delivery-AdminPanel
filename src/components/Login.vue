@@ -74,7 +74,8 @@ async function try_login(){
         box-sizing: border-box;
         margin: 0;
         padding: 0;	
-        font-family: 'Poppins', sans-serif;
+        /*TODO:下面的字体放开会导致icon不显示 */
+        /* font-family:  "Poppins",sans-serif;  */
     }
 
     .container {
