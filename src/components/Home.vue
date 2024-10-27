@@ -6,7 +6,7 @@
         {label:'Home',icon:'pi pi-home'},
         {label:'About',icon:'pi pi-info-circle'},
         {label:'Contact',icon:'pi pi-envelope'},
-        {label:'Home',icon:'pi pi-home'},
+        {label:'修改密码',icon:'pi pi-home'},
         {label:'About',icon:'pi pi-info-circle'},
         {label:'Contact',icon:'pi pi-envelope'},
         {label:'Home',icon:'pi pi-home'},

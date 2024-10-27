@@ -9,6 +9,8 @@ const Account=ref("");
 const Password=ref("");
 async function try_login(){
 
+    
+
     let data = new FormData();
     data.append('account',Account.value);
     data.append('password',Password.value);
@@ -19,12 +21,12 @@ async function try_login(){
         if (response.data.code === 200) {
             if(response.data.msg === "ok"){
                 router.push('/Home');
-                
+                window.localStorage.setItem("access_token",response.data.data.access_token);
             }else{
-                alert("Wrong Password");
+                alert(response.data.msg);
             }
         } else {
-            alert('Wrong Username or Password');
+            alert(response.data.msg);
         }
         } catch (error) {alert(error.message);}
 }
