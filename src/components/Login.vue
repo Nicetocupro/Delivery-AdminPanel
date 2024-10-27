@@ -37,8 +37,6 @@ async function try_login(){
             <div class="screen__content">
                 <form class="login">
                     <h3 class="login_header">Admin Panel</h3>
-                    <h3 class="login_header">{{ Account  }}</h3>
-                    <h3 class="login_header">{{ Password }}</h3>
                     
                     <div class="login__field">
                         <IftaLabel>
