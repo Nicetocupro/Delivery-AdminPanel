@@ -1,6 +1,34 @@
 <script setup lang="ts">
 import IftaLabel from 'primevue/iftalabel';
 import InputText from 'primevue/inputtext';
+import router from '../router/router';
+import instance from '../http.js';
+import {ref} from 'vue'
+
+const Account=ref("");
+const Password=ref("");
+async function try_login(){
+
+    let data = new FormData();
+    data.append('account',Account.value);
+    data.append('password',Password.value);
+
+    try {
+        const response = await instance.post(`/admin/login`, data);
+
+        if (response.data.code === 200) {
+            if(response.data.msg === "ok"){
+                router.push('/Home');
+                
+            }else{
+                alert("Wrong Password");
+            }
+        } else {
+            alert('Wrong Username or Password');
+        }
+        } catch (error) {alert(error.message);}
+}
+
 </script>
 
 <template>
@@ -9,24 +37,26 @@ import InputText from 'primevue/inputtext';
             <div class="screen__content">
                 <form class="login">
                     <h3 class="login_header">Admin Panel</h3>
-
+                    <h3 class="login_header">{{ Account  }}</h3>
+                    <h3 class="login_header">{{ Password }}</h3>
+                    
                     <div class="login__field">
                         <IftaLabel>
                             <i class="pi pi-user icon"></i>
-                            <InputText id="Account" class="login__input" v-model="value"/>
+                            <InputText id="Account" class="login__input" v-model="Account"/>
                             <label for="Account">Account</label>
                         </IftaLabel>
                     </div>
                     <div class="login__field">
                         <IftaLabel>
                             <i class="pi pi-lock icon"></i>
-                            <InputText id="Password" class="login__input" v-model="value"/>
+                            <InputText id="Password" class="login__input" v-model="Password"/>
                             <label for="Password">Password</label>
                         </IftaLabel>
                     </div>
-                    <Button class="button login__submit">
+                    <Button class="button login__submit" @click="try_login">
                         <span class="button__text">Log In Now</span>
-                    </Button>				
+                    </Button>
                 </form>
             </div>
             <div class="screen__background">

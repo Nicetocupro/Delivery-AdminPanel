@@ -1,17 +1,15 @@
 import { createApp } from "vue";
-import PrimeVue from "primevue/config";
-import App from './components/Login.vue'
+import App from './App.vue'
 
 import Aura from '@primevue/themes/aura';
+import PrimeVue from "primevue/config";
 
 import 'primeicons/primeicons.css';
+import router from './router/router'
 
-const app = createApp(App);
+const cors = require("cors");
 
-app.use(PrimeVue, {
-    theme: {
-        preset: Aura
-    }
-});
-
-app.mount('#app');
+createApp(App).use(PrimeVue, {theme: {preset: Aura}})
+              .use(router)
+              .use(cors)
+              .mount('#app');
