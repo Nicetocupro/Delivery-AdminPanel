@@ -9,26 +9,32 @@ const Account=ref("");
 const Password=ref("");
 async function try_login(){
 
+    if(Account.value.length>30||Account.value.length<10){
+        alert("账号长度错误");
+        return;
+    }
+    if(Password.value.length>30||Password.value.length<15){
+        alert("密码错误");
+        return;
+    }
+
     let data = new FormData();
     data.append('account',Account.value);
     data.append('password',Password.value);
-
     try {
         const response = await instance.post(`/admin/login`, data);
-
         if (response.data.code === 200) {
             if(response.data.msg === "ok"){
                 router.push('/Home');
-                
+                window.localStorage.setItem("access_token",response.data.data.access_token);
             }else{
-                alert("Wrong Password");
+                alert(response.data.msg);
             }
         } else {
-            alert('Wrong Username or Password');
+            alert(response.data.msg);
         }
-        } catch (error) {alert(error.message);}
+    } catch (error) {alert(error.message);}
 }
-
 </script>
 
 <template>
