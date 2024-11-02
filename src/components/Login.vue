@@ -1,32 +1,32 @@
 <script setup lang="ts">
 import IftaLabel from 'primevue/iftalabel';
 import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
 import router from '../router/router';
 import instance from '../http.js';
 import {ref} from 'vue'
 
 const Account=ref("");
-const Password=ref("");
+const password=ref("");
 async function try_login(){
 
-    if(Account.value.length>30||Account.value.length<10){
+    if(Account.value.length > 30 || Account.value.length<10){
         alert("账号长度错误");
         return;
     }
-    if(Password.value.length>30||Password.value.length<15){
-        alert("密码错误");
+    if(password.value.length > 30 || password.value.length<15){
+        alert("密码长度错误");
         return;
     }
 
     let data = new FormData();
     data.append('account',Account.value);
-    data.append('password',Password.value);
+    data.append('password',password.value);
     try {
         const response = await instance.post(`/admin/login`, data);
         if (response.data.code === 200) {
             if(response.data.msg === "ok"){
                 router.push('/Home');
-                window.localStorage.setItem("access_token",response.data.data.access_token);
             }else{
                 alert(response.data.msg);
             }
@@ -54,7 +54,7 @@ async function try_login(){
                     <div class="login__field">
                         <IftaLabel>
                             <i class="pi pi-lock icon"></i>
-                            <InputText id="Password" class="login__input" v-model="Password"/>
+                            <InputText id="Password" type="password" class="login__input" v-model="password" toggleMask/>
                             <label for="Password">Password</label>
                         </IftaLabel>
                     </div>
