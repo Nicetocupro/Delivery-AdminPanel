@@ -10,8 +10,12 @@ const routes=[
     },
     {
         path:'/Home',
-        component:Home
-    }
+        component:Home,
+        children:[
+            
+        ]
+    },
+    { path: '/:pathMatch(.*)*', redirect: '/login/admin' },
 ]
 
 const router = createRouter({
