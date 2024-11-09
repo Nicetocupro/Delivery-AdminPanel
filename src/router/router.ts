@@ -11,10 +11,6 @@ const routes=[
     {
         path:'/Home',
         component:Home
-    },
-    {
-        path:'/',
-        redirect:'/login/admin'
     }
 ]
 
@@ -24,21 +20,29 @@ const router = createRouter({
 })
 
 router.beforeEach(async(to, from, next) => {
-    const response = await instance.get("/api/v1/admin/jwt/login-status");
-    let isAuthenticated = (response.data.code === 200) && (response.data.msg === "ok");
 
-    // 用户未登录且试图访问非登录页面时，重定向到登录页
-    if (!isAuthenticated && to.path !== '/login/admin') {
-        next('/login/admin');
-    } 
-    // 已登录用户访问登录页面时，重定向到主页
-    else if (isAuthenticated && to.path === '/login/admin') {
-        next('/Home');
-    } 
-    // 否则，正常放行
-    else {
+    console.log('进入导航守卫');
+
+    if(to.path === '/login/admin' ){
         next();
+        return;
     }
+
+
+    try {
+        const response = await instance.get("/api/v1/admin/jwt/login-status");
+        console.log(response.status);
+        console.log('instance get结束');
+    
+        if (response.status !== 200) {
+          next('/login/admin');
+        } else {
+          next(); // 继续导航
+        }
+      } catch (error) {
+        console.error('请求失败:', error);
+        next('/login/admin'); // 导航到登录页面
+      }
 });
 
 export default router;

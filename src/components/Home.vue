@@ -68,6 +68,8 @@
     <div class="layout_sidebar">
         <Menu :model="items" class="w-full"></Menu>
     </div>
+
+    
     <div class="content">
         <Button class="button login__submit" @click="logout">
             <span class="button__text">Logout</span>
@@ -102,6 +104,7 @@
         display:inline-block;
         height:100%;
         width:18rem;
+        margin:10px;
     }
     .content{
         margin:10px;

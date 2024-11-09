@@ -24,8 +24,9 @@ async function try_login(){
     data.append('password',password.value);
     try {
         const response = await instance.post(`/admin/login`, data);
-        if (response.data.code === 200) {
+        if (response.status === 200) {
             if(response.data.msg === "ok"){
+                console.log("login success");
                 router.push('/Home');
             }else{
                 alert(response.data.msg);
