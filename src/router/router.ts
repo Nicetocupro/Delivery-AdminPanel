@@ -50,8 +50,17 @@ router.beforeEach(async(to, from, next) => {
     // return;
 
     if(to.path === '/login/admin' ){
-        next();
-        return;
+
+        try{
+            const response = await instance.get("/api/v1/admin/jwt/login-status");
+            if(response.status === 200){
+                next('/Home');
+            }else{
+                next();
+            }
+        }catch(err){
+            return next();
+        }
     }
 
 

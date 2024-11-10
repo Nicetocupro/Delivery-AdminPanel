@@ -1,7 +1,14 @@
 <template>
-    <p>123</p>
     <li v-for="item in applications" :key="item.id">
-        {{ item.ID }} - {{ item.CreatedAt }}
+        
+        商家ID: {{ item.ID }} 创建于: {{ item.CreatedAt }}
+        描述: {{ item.Description }} EMAIL: {{ item.Email }}
+        联系方式: {{ item.PhoneNumber }}
+        负责人姓名: {{ item.Name }}
+
+        
+
+        <button @click="approve(item.ID)">同意申请</button>
     </li>
 </template>
   
@@ -24,7 +31,7 @@ async function fetchData(page) {
         const response = await instance.get("/api/v1/admin/jwt/merchant-application/" + page);
         applications = response.data.data.Applications;
         console.log("信息");
-        console.log(applications);
+        console.log(applications[0]);
     } catch (error) {
         console.error("获取数据失败", error);
     }

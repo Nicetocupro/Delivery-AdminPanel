@@ -29,9 +29,11 @@ async function try_login(){
                 console.log("login success");
                 router.push('/Home');
             }else{
+                console.log("login failed");
                 alert(response.data.msg);
             }
         } else {
+            console.log("response.status!=200");
             alert(response.data.msg);
         }
     } catch (error) {alert(error.message);}
