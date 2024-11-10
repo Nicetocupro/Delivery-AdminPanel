@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import IftaLabel from 'primevue/iftalabel';
 import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
+import RadioButton from 'primevue/radiobutton';
 import router from '../router/router';
 import instance from '../http.js';
 import {ref} from 'vue'
 
 const Account=ref("");
 const password=ref("");
+
+let identity=ref("");
+
 async function try_login(){
 
     if(Account.value.length > 30 || Account.value.length<10){
@@ -22,19 +25,23 @@ async function try_login(){
     let data = new FormData();
     data.append('account',Account.value);
     data.append('password',password.value);
-    try {
-        const response = await instance.post(`/admin/login`, data);
-        if (response.status === 200) {
-            if(response.data.msg === "ok"){
-                console.log("login success");
-                router.push('/Home');
-            }else{
+    if(identity.value == "admin")
+    {
+        try {
+            const response = await instance.post(`/admin/login`, data);
+            if (response.status === 200) {
+                if(response.data.msg === "ok"){
+                    console.log("login success");
+                    router.push('/Home');
+                }else{
+                    alert(response.data.msg);
+                }
+            } else {
                 alert(response.data.msg);
             }
-        } else {
-            alert(response.data.msg);
-        }
     } catch (error) {alert(error.message);}
+    }
+    
 }
 </script>
 
@@ -58,6 +65,16 @@ async function try_login(){
                             <InputText id="Password" type="password" class="login__input" v-model="password" toggleMask/>
                             <label for="Password">Password</label>
                         </IftaLabel>
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <RadioButton id="admin" v-model="identity" value="admin" class="custom-radio" variant="filled"/>
+                            <label for="admin" class="radio-label">Administrator</label>
+                        </div>
+                        <div class="radio-item">
+                            <RadioButton id="merchant" v-model="identity" value="merchant" class="custom-radio" variant="filled"/>
+                            <label for="merchant" class="radio-label">Merchant</label>
+                        </div>
                     </div>
                     <Button class="button login__submit" @click="try_login">
                         <span class="button__text">Log In Now</span>
@@ -227,6 +244,27 @@ async function try_login(){
     .login__submit:hover {
         border-color: #6A679E;
         outline: none;
+    }
+
+    .radio-group {
+        display: flex;
+        align-items: center;
+    }
+
+    .radio-item {
+        margin-right: 20px;
+    }
+
+    .radio-label {
+        color: #646464;
+        font-size: 14px;
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    .custom-radio {
+        background-color: #eee;
+        border-radius: 50%;
     }
 
     .button__icon {
