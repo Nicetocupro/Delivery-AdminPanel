@@ -10,11 +10,9 @@
         <AppTopBar></AppTopBar>
         <AppSideBar></AppSideBar>
         <div class="layout-main-container">
-            <p>123</p>
             <router-view></router-view>
         </div>
     </div>
-
 
 </template>
 

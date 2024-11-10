@@ -12,7 +12,26 @@ const routes=[
         path:'/Home',
         component:Home,
         children:[
-            
+            {
+                path:'',
+                component:()=>import('../components/manager_views/index.vue')
+            },
+            {
+                path:'change_password',
+                component:()=>import('../components/manager_views/change_password.vue')
+            },
+            {
+                path:'create_merchants',
+                component:()=>import('../components/manager_views/create_merchants.vue')
+            },
+            {
+                path:'delete_merchants',
+                component:()=>import('../components/manager_views/delete_merchants.vue')
+            },
+            {
+                path:'applications/:page',
+                component:()=>import('../components/manager_views/applications.vue')
+            },
         ]
     },
     { path: '/:pathMatch(.*)*', redirect: '/login/admin' },
@@ -26,6 +45,9 @@ const router = createRouter({
 router.beforeEach(async(to, from, next) => {
 
     console.log('进入导航守卫');
+
+    // next();
+    // return;
 
     if(to.path === '/login/admin' ){
         next();
