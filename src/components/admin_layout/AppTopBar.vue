@@ -33,5 +33,5 @@
 </template>
 
 <style scoped>
-@import '../assets/topbar.css';
+@import '../../assets/topbar.css';
 </style>
