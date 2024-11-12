@@ -31,12 +31,10 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import instance from '../../http.js';
-import router from '../../router/router.ts';
+import instance from '../../../http.js';
+import router from '../../../router/router.ts';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';                   // optional
 
 const route = useRoute()
 
@@ -78,7 +76,7 @@ function arrayBufferToBase64(buffer) {
 
 async function getimage(license){
     console.log(license);
-    image = await instance.get("api/v1/admin/jwt/merchant-application/license/"+license,{
+    image = await instance.get("api/v1/admin/merchant-application/license/"+license,{
         responseType: 'arraybuffer'
     });
     const imageData = image.data;

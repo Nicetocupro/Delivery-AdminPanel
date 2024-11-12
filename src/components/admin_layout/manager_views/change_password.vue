@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import {ref} from 'vue'
-    import instance from '../../http.js';
-    import router from '../../router/router.js'
+    import instance from '../../../http.js';
+    import router from '../../../router/router'
     import Button from 'primevue/button';
     import Dialog from 'primevue/dialog';
 
