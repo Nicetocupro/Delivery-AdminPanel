@@ -23,14 +23,17 @@ async function try_login(){
     data.append('account',Account.value);
     data.append('password',password.value);
     try {
-        const response = await instance.post(`/admin/login`, data);
-        if (response.data.code === 200) {
+        const response = await instance.post(`/api/v1/admin/login`, data);
+        if (response.status === 200) {
             if(response.data.msg === "ok"){
+                console.log("login success");
                 router.push('/Home');
             }else{
+                console.log("login failed");
                 alert(response.data.msg);
             }
         } else {
+            console.log("response.status!=200");
             alert(response.data.msg);
         }
     } catch (error) {alert(error.message);}
