@@ -46,15 +46,13 @@ router.beforeEach(async(to, from, next) => {
 
     console.log('进入导航守卫');
 
-    // next();
-    // return;
 
     if(to.path === '/login/admin' ){
-
+        console.log('守卫进入login');
         try{
-            const response = await instance.get("/api/v1/admin/jwt/login-status");
+            const response = await instance.get("/api/v1/admin/login-status");
             if(response.status === 200){
-                next('/Home');
+                next('Home');
             }else{
                 next();
             }
@@ -65,7 +63,7 @@ router.beforeEach(async(to, from, next) => {
 
 
     try {
-        const response = await instance.get("/api/v1/admin/jwt/login-status");
+        const response = await instance.get("/api/v1/admin/login-status");
         console.log(response.status);
         console.log('instance get结束');
     

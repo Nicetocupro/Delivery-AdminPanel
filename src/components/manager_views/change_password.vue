@@ -15,7 +15,7 @@
     })
 
     async function logout(){
-        const response = await instance.post(`/admin/logout`);
+        const response = await instance.post(`/api/v1/admin/logout`);
         if (response.status === 200) {
             if(response.data.msg === "ok"){
                 router.push('/');
@@ -29,6 +29,14 @@
 
 
     async function change_pwd(){
+
+        if(pwdModel.value.new_pwd.length > 30 || pwdModel.value.new_pwd.length<15){
+            alert("密码长度错误");
+            return;
+        }
+
+
+
         if(pwdModel.value.new_pwd != pwdModel.value.con_pwd)
             alert("两次密码输入不一致，请重新输入");
         else
@@ -37,7 +45,7 @@
             data.append("password", pwdModel.value.new_pwd);
 
             try{
-                const response = await instance.put('/api/v1/admin/jwt/change-password', data);
+                const response = await instance.put('/api/v1/admin/change-password', data);
                 if (response.status === 200) {
                     if(response.data.msg === "ok"){
                         alert("修改密码成功");

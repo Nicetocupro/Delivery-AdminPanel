@@ -23,7 +23,7 @@ async function try_login(){
     data.append('account',Account.value);
     data.append('password',password.value);
     try {
-        const response = await instance.post(`/admin/login`, data);
+        const response = await instance.post(`/api/v1/admin/login`, data);
         if (response.status === 200) {
             if(response.data.msg === "ok"){
                 console.log("login success");

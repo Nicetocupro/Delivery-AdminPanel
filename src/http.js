@@ -1,16 +1,12 @@
 import axios from 'axios';
-import router from '../src/router/router';
 
 const instance = axios.create({
   baseURL: 'https://localhost',
 });
 
-
-
 instance.interceptors.response.use(
 
   (response) => {
-    console.log(response);
     return response;
   },
   (error) => {
@@ -20,7 +16,7 @@ instance.interceptors.response.use(
     } else if (error.status == 403) {
       console.log('服务器被吃了( ╯□╰ )403');
     } else if (error.status == 401) {
-      console.log('accesstoken过期401!!!!!!!');
+      console.log('401!!!!!!!');
     } else {
       console.log(error);
     }
@@ -29,8 +25,5 @@ instance.interceptors.response.use(
   }
 
 );
-
-
-
 
 export default instance;
