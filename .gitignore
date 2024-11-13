@@ -21,3 +21,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 本地仓库的下载
+package-lock.json
+
+# 历史记录
+.history/
