@@ -7,7 +7,12 @@ let base = "/merchant_home";
 const items = ref([
   { label: "Home", icon: "pi pi-home", url: base },
   {
-    label: "修改密码或登出",
+    label: "我的餐厅",
+    icon: "pi pi-fw pi-shopping-cart",
+    url: base + "/Merchant_restaurant",
+  },
+  {
+    label: "个人信息",
     icon: "pi pi-user",
     url: base + "/change_merchant_password",
   },

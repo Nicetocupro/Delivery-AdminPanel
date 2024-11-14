@@ -43,6 +43,10 @@ const routes = [
                 path: 'change_merchant_password',
                 component: () => import('../components/merchant_layout/merchant_view/change_merchant_password.vue')
             },
+            {
+                path: 'Merchant_restaurant',
+                component: () => import('../components/merchant_layout/merchant_view/Merchant_restaurant.vue')
+            },
         ]
     }
 ]
