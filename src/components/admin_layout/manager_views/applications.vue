@@ -5,14 +5,15 @@
         <Column field="name" header="name"></Column>
         <Column field="description" header="description"></Column>
         <Column field="phone_number" header="phone_number"></Column>
+        <Column field="status" header="当前状态"></Column>
         <Column class="w-24 !text-end" header="通过审核">
             <template #body="{ data }">
-                <Button icon="pi pi-check" @click="selectRow(data)" severity="secondary" rounded></Button>
+                <Button icon="pi pi-check" @click="approve(data.id)" severity="secondary" rounded></Button>
             </template>
         </Column>
         <Column class="w-24 !text-end" header="拒绝审核">
             <template #body="{ data }">
-                <Button icon="pi pi-times" @click="selectRow(data)" severity="secondary" rounded></Button>
+                <Button icon="pi pi-times" @click="disapprove(data.id)" severity="secondary" rounded></Button>
             </template>
         </Column>
         <Column class="w-24 !text-end" header="点击查看商家证书">
@@ -51,7 +52,7 @@ async function fetchData(page) {
     console.log("开始获取第"+page+"页数据")
 
     try {
-        const response = await instance.get("/api/v1/admin/merchant-application/" + page);
+        const response = await instance.get("/admin/merchant-application/" + page);
         applications = response.data.data.applications;
         console.log("信息");
         console.log(applications);
@@ -76,13 +77,41 @@ function arrayBufferToBase64(buffer) {
 
 async function getimage(license){
     console.log(license);
-    image = await instance.get("api/v1/admin/merchant-application/license/"+license,{
+    image = await instance.get("/admin/merchant-application/license/"+license,{
         responseType: 'arraybuffer'
     });
     const imageData = image.data;
     imagesrc =`data:image/png;base64,${arrayBufferToBase64(imageData)}`;
     console.log(imagesrc);
     vis.value = true
+}
+
+async function approve(id){
+    // /admin/merchant-application/{application_id}/approve
+
+    console.log(id+'尝试申请通过');
+    try {
+        const response = await instance.put("/admin/merchant-application/"+id+"/approve");
+        console.log(response);
+        alert("申请成功通过");
+        fetchData(route.params.page)
+    } catch (error) {
+        console.error("获取数据失败", error);
+    }
+}
+
+async function disapprove(id){
+    // /admin/merchant-application/{application_id}/disapprove
+
+    console.log(id+'尝试申请通过');
+    try {
+        const response = await instance.put("/admin/merchant-application/"+id+"/disapprove");
+        console.log(response);
+        alert("成功拒绝申请");
+        fetchData(route.params.page)
+    } catch (error) {
+        console.error("获取数据失败", error);
+    }
 }
 
 </script>

@@ -15,7 +15,7 @@
     })
 
     async function logout(){
-        const response = await instance.post(`/api/v1/admin/logout`);
+        const response = await instance.post(`/admin/logout`);
         if (response.status === 200) {
             if(response.data.msg === "ok"){
                 router.push('/');
@@ -45,7 +45,7 @@
             data.append("password", pwdModel.value.new_pwd);
 
             try{
-                const response = await instance.put('/api/v1/admin/change-password', data);
+                const response = await instance.put('/admin/change-password', data);
                 if (response.status === 200) {
                     if(response.data.msg === "ok"){
                         alert("修改密码成功");
