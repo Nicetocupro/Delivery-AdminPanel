@@ -14,15 +14,15 @@
         justify-content: center;
         min-height: 100vh;
         overflow: hidden;
-        background: linear-gradient(90deg, #C7C5F4, #776BCC);
+        background: linear-gradient(90deg, #a7d9a7, #1ccc6c);
     }
 
     .screen {
-        background: linear-gradient(90deg, #5D54A4, #7C78B8);		
+        background: linear-gradient(90deg, #13bb78, #027638);		
         position: relative;	
         height: 600px;
         width: 360px;	
-        box-shadow: 0px 0px 24px #5C5696;
+        box-shadow: 0px 0px 24px #198248;
     }
 
     .screen__content {
@@ -33,7 +33,7 @@
 
     .login_header{
         font-size: 30px;
-        color: #6C63AC;
+        color: #129a5f;
     }
 
     .screen__background {		
@@ -64,7 +64,7 @@
     .screen__background__shape2 {
         height: 220px;
         width: 220px;
-        background: #6C63AC;	
+        background: #159854;	
         top: -172px;
         right: 0;	
         border-radius: 32px;
@@ -73,7 +73,7 @@
     .screen__background__shape3 {
         height: 540px;
         width: 190px;
-        background: linear-gradient(270deg, #5D54A4, #6A679E);
+        background: linear-gradient(270deg, #09a174, #0b994d);
         top: -24px;
         right: 0;	
         border-radius: 32px;
@@ -82,7 +82,7 @@
     .screen__background__shape4 {
         height: 400px;
         width: 200px;
-        background: #7E7BB9;	
+        background: #085c37;	
         top: 420px;
         right: 50px;	
         border-radius: 60px;
@@ -176,5 +176,5 @@
     .button__icon {
         font-size: 24px;
         margin-left: auto;
-        color: #7875B5;
+        color: #b57583;
     }
