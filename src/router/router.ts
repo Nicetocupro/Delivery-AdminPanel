@@ -38,7 +38,12 @@ const routes = [
     {
         path: '/merchant_home',
         component: Merchant_Home,
-        children: []
+        children: [
+            {
+                path: 'change_merchant_password',
+                component: () => import('../components/merchant_layout/merchant_view/change_merchant_password.vue')
+            },
+        ]
     }
 ]
 
@@ -56,8 +61,8 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
         console.log('守卫进入login');
         try {
-            const admin_login_response = await instance.get("/api/v1/admin/login-status");
-            const merchant_login_response = await instance.get("/api/v1/merchant/login-status");
+            const admin_login_response = await instance.get("/admin/login-status");
+            const merchant_login_response = await instance.get("/merchant/login-status");
 
             // 如果管理员已经登录，跳转到管理员首页
             if (admin_login_response.status === 200) {
@@ -80,7 +85,7 @@ router.beforeEach(async (to, from, next) => {
     // 如果目标路径是 '/admin_home' 页面
     else if (to.path === '/admin_home') {
         try {
-            const response = await instance.get("/api/v1/admin/login-status");
+            const response = await instance.get("/admin/login-status");
 
             // 如果管理员没有登录，跳转到登录页面
             if (response.status !== 200) {
@@ -97,7 +102,7 @@ router.beforeEach(async (to, from, next) => {
     // 如果目标路径是 '/merchant_home' 页面
     else if (to.path === '/merchant_home') {
         try {
-            const response = await instance.get("/api/v1/merchant/login-status");
+            const response = await instance.get("/merchant/login-status");
 
             // 如果商家没有登录，跳转到登录页面
             if (response.status !== 200) {

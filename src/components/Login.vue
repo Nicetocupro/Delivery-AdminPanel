@@ -46,9 +46,10 @@ async function try_login() {
   try {
     const apiPath =
       identity.value === "admin"
-        ? "/api/v1/admin/login"
-        : "/api/v1/merchant/login";
+        ? "admin/login"
+        : "merchant/login";
     const response = await instance.post(apiPath, data);
+
 
     if (response.status === 200) {
       if (response.data.msg === "ok") {

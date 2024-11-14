@@ -51,7 +51,7 @@ async function fetchData(page) {
     console.log("开始获取第"+page+"页数据")
 
     try {
-        const response = await instance.get("/api/v1/admin/merchant-application/" + page);
+        const response = await instance.get("/admin/merchant-application/" + page);
         applications = response.data.data.applications;
         console.log("信息");
         console.log(applications);
@@ -76,7 +76,7 @@ function arrayBufferToBase64(buffer) {
 
 async function getimage(license){
     console.log(license);
-    image = await instance.get("api/v1/admin/merchant-application/license/"+license,{
+    image = await instance.get("admin/merchant-application/license/"+license,{
         responseType: 'arraybuffer'
     });
     const imageData = image.data;
