@@ -40,6 +40,10 @@ const routes = [
         component: Merchant_Home,
         children: [
             {
+                path: '',
+                component: () => import('../components/merchant_layout/merchant_view/Merchant_dashboard.vue')
+            },
+            {
                 path: 'change_merchant_password',
                 component: () => import('../components/merchant_layout/merchant_view/change_merchant_password.vue')
             },
@@ -48,6 +52,10 @@ const routes = [
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_restaurant.vue')
             },
         ]
+    },
+    {
+        path: '/:catchAll(.*)',
+        redirect: '/login'
     }
 ]
 
