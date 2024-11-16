@@ -1,9 +1,9 @@
 <script setup lang="ts">
-    import {ref} from 'vue'
-    import instance from '../../../http.js';
-    import router from '../../../router/router'
     import Button from 'primevue/button';
-    import Dialog from 'primevue/dialog';
+import Dialog from 'primevue/dialog';
+import { ref } from 'vue';
+import instance from '../../../http.js';
+import router from '../../../router/router';
 
 
     let visible = ref(false);
@@ -15,7 +15,7 @@
     })
 
     async function logout(){
-        const response = await instance.post(`/api/v1/admin/logout`);
+        const response = await instance.post(`/admin/logout`);
         if (response.status === 200) {
             if(response.data.msg === "ok"){
                 router.push('/');
@@ -45,7 +45,7 @@
             data.append("password", pwdModel.value.new_pwd);
 
             try{
-                const response = await instance.put('/api/v1/admin/change-password', data);
+                const response = await instance.put('/admin/change-password', data);
                 if (response.status === 200) {
                     if(response.data.msg === "ok"){
                         alert("修改密码成功");
