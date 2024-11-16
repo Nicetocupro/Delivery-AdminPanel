@@ -77,7 +77,7 @@ async function try_login() {
     <div class="screen">
       <div class="screen__content">
         <form class="login">
-          <h3 class="login_header">Admin Panel</h3>
+          <h3 class="login_header">管理员登录</h3>
 
           <div class="login__field">
             <IftaLabel>
@@ -128,7 +128,7 @@ async function try_login() {
             @click="try_login"
             :disabled="!validateForm"
           >
-            <span class="button__text">Log In Now</span>
+            <span class="button__text">登录</span>
           </Button>
         </form>
       </div>

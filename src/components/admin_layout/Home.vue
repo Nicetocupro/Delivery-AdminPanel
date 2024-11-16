@@ -24,13 +24,13 @@
     }
     .layout-main-container {
         position: fixed;
-        width: calc(100vw - 25rem);
-        height: calc(100vh - 8rem);
+        width: calc(100vw - 17rem);
+        height: calc(100vh - 7rem);
         z-index: 999;
         overflow-y: auto;
         user-select: none;
         top: 6rem;
-        left: 23rem;
+        left: 17rem;
         background-color:rgba(34, 35, 35, 0.108);
         padding: 0.5rem 0.5rem;
     }

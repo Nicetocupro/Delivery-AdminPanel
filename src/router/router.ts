@@ -18,6 +18,10 @@ const routes = [
                 component: () => import('../components/admin_layout/manager_views/index.vue')
             },
             {
+                path: 'index',
+                component: () => import('../components/admin_layout/manager_views/index.vue')
+            },
+            {
                 path: 'change_password',
                 component: () => import('../components/admin_layout/manager_views/change_password.vue')
             },

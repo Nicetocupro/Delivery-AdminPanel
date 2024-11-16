@@ -1,7 +1,13 @@
 <template>
-    <div>欢迎管理员：
-        <h1 id="clock"></h1>
-    </div>
+    
+  <Card>
+      <template #title>欢迎管理员：</template>
+      <template #content><div><h1 id="clock"></h1></div></template>
+  </Card>
+
+  <Card>
+  
+  </Card>
 </template>
 
 <script>
