@@ -1,3 +1,25 @@
 <template>
-    <p>这里是管理员默认界面</p>
+    
+  <Card>
+      <template #title>欢迎管理员：</template>
+      <template #content><div><h1 id="clock"></h1></div></template>
+  </Card>
+
+  <Card>
+  
+  </Card>
 </template>
+
+<script>
+import Clock from '../../../js/Clock'
+
+export default {
+  name: 'App',
+  mounted() {
+    const clockElement = document.getElementById('clock');
+    const clock = new Clock();
+    clock.display(clockElement);
+  }
+};
+
+</script>
