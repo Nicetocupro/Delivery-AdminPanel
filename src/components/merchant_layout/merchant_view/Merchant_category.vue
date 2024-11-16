@@ -273,9 +273,9 @@
             <Column header="操作">
                 <template #body="slotProps">
                     <!--修改按钮-->
-                    <Button icon="pi pi-pencil" severity="success"  class="operation-button" @click="openEditDialog(slotProps.data)" />
+                    <Button icon="pi pi-pencil" severity="success" class="operation-button" @click="openEditDialog(slotProps.data)" />
                     <!--删除按钮-->
-                    <Button icon="pi pi-trash" severity="danger" @click="deleteCategory(slotProps.data.id)" />
+                    <Button icon="pi pi-trash" severity="danger" class="operation-button" @click="deleteCategory(slotProps.data.id)" />
                 </template>
             </Column>
             <template #expansion="slotProps">
