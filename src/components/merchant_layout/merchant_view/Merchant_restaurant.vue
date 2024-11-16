@@ -6,6 +6,7 @@ import Dialog from "primevue/dialog";
 import { useToast } from "primevue/usetoast"; // 引入 useToast
 import { computed, onMounted, ref } from "vue";
 import instance from "../../../http.js"; // 假设这是你的 HTTP 实例
+import router from "../../../router/router.js";
 
 interface Restaurant {
   id: number;
@@ -218,8 +219,7 @@ const updateRestaurant = async () => {
 // 进入餐厅的函数
 const enterRestaurant = (restaurantId: number) => {
   console.log("进入餐厅:", restaurantId);
-  // 在此添加跳转到餐厅详情页的逻辑
-  // 示例：router.push(`/restaurant/${restaurantId}`);
+  router.push(`/restaurant/${restaurantId}`);
 };
 
 // 定义过滤后的餐厅列表，基于 searchQuery 动态更新

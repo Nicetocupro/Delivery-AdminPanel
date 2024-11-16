@@ -38,6 +38,7 @@ const routes = [
     {
         path: '/merchant_home',
         component: Merchant_Home,
+        props: true,
         children: [
             {
                 path: '',
@@ -49,8 +50,13 @@ const routes = [
             },
             {
                 path: 'Merchant_restaurant',
-                component: () => import('../components/merchant_layout/merchant_view/Merchant_restaurant.vue')
+                component: () => import('../components/merchant_layout/merchant_view/Merchant_restaurant.vue'),
             },
+            {
+                path: '/restaurant/:restaurantID',
+                component: () => import('../components/merchant_layout/merchant_view/Merchant_category.vue'),
+                props: true
+            }
         ]
     },
     {
@@ -112,7 +118,8 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 如果目标路径是 '/merchant_home' 页面
-    else if (to.path === '/merchant_home') {
+    else if (to.path.startsWith('/merchant_home')) {
+        console.log("进入判断");
         try {
             const response = await instance.get("/merchant/login-status");
 
@@ -120,6 +127,7 @@ router.beforeEach(async (to, from, next) => {
             if (response.status !== 200) {
                 return next('/login');
             } else {
+                console.log("跳转成功");
                 return next(); // 如果商家已登录，继续访问 merchant_home 页面
             }
         } catch (error) {
