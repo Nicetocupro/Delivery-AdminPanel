@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Button from "primevue/button";
     import Column from "primevue/column";
-    import DataTable from "primevue/datatable";
+    import DataTable, { DataTableRowClickEvent } from "primevue/datatable";
     import Dialog from "primevue/dialog";
     import { useToast } from "primevue/usetoast";
     import { computed, onMounted, ref, toValue } from "vue";
@@ -29,6 +29,8 @@
     let editingCategory = ref<Category | null>(null); // 编辑餐厅对象
     let categories = ref<Category[]>([]); // 餐厅列表
 
+    const expandedRows = ref<Category[]>([]);
+
     // 格式化日期
     const formatDate = (timestamp: number): string => {
         const date = new Date(timestamp * 1000);
@@ -37,8 +39,9 @@
 
     let newCategory = ref({
         name: "",
-        type: "0",
-        sort: ""
+        type: "1",
+        sort: "",
+        status: "1"
     });
 
     const fetchCategories = async() =>{
@@ -84,6 +87,7 @@
         data.append("name", newCategory.value.name);
         data.append("type", newCategory.value.type);
         data.append("sort", newCategory.value.sort);
+        data.append("status", newCategory.value.status);
 
         console.log(data);
 
@@ -199,7 +203,8 @@
         newCategory.value = {
             name: "",
             type: "0",
-            sort: ""
+            sort: "",
+            status: "1"
         };
         visible.value = true;
     };
@@ -209,6 +214,19 @@
         console.log(editingCategory.value.id);
         visible.value = true;
     };
+
+    const setExpandedRow = ($event: DataTableRowClickEvent) => {
+    // 判断当前行是否已展开
+    const isExpanded = expandedRows.value.some((row: Category) => row.id === $event.data.id);
+
+    if (isExpanded) {
+        // 如果当前行已展开，则折叠它
+        expandedRows.value = expandedRows.value.filter((row: Category) => row.id !== $event.data.id);
+    } else {
+        // 如果当前行未展开，则展开它
+        expandedRows.value = [...expandedRows.value, $event.data];
+    }
+};
 
     onMounted(fetchCategories);
 </script>
@@ -227,12 +245,12 @@
             </div>
         </div>
 
-        <DataTable :value="filteredCategory" datakey="id" sortField="sort" :sortOrder="-1" responsiveLayout="scroll" >
+        <DataTable :value="filteredCategory" datakey="id" sortField="sort" :sortOrder="-1" responsiveLayout="scroll" v-model:expandedRows="expandedRows">
             <Column expander style="width: 5rem" />
             <Column field="name" header="品类名称" />
             <Column field="type" header="类型">
                 <template #body="slotProps">
-                    {{ slotProps.data.type === 0 ? '菜品' : '套餐' }}
+                    {{ slotProps.data.type === 1 ? '菜品' : '套餐' }}
                 </template>
             </Column>
             <Column header="创建时间">
@@ -248,7 +266,7 @@
             <Column field="sort" header="排序值" sortable/>
             <Column header="品类状态">
                 <template #body="slotProps">
-                    {{slotProps.data.status === 1 ? 'ON' : 'OFF'}}
+                    {{slotProps.data.status === 2 ? 'ON' : 'OFF'}}
                 </template>
             </Column>
 
@@ -260,6 +278,27 @@
                     <Button icon="pi pi-trash" severity="danger" @click="deleteCategory(slotProps.data.id)" />
                 </template>
             </Column>
+            <template #expansion="slotProps">
+                <div class="p-4">
+                    <h5>菜品列表</h5>
+                    <DataTable :value="slotProps.data.dishes" datakey="id" sortField="sort" :sortOrder="-1" responsiveLayout="scroll">
+                        <Column field="name" header="菜品名称" />
+                        <Column field="price" header="菜品价格" />
+                        <Column field="description" header="菜品描述" />
+                        <Column header="创建时间">
+                            <template #body="slotProps">
+                                {{ formatDate(slotProps.data.created_at) }}
+                            </template>
+                        </Column>
+                        <Column header="更新时间">
+                            <template #body="slotProps">
+                                {{ formatDate(slotProps.data.updated_at) }}
+                            </template>
+                        </Column>
+                        <Column header="排序值" field="sort" />
+                    </DataTable>
+                </div>
+            </template>
         </DataTable>
 
         <Dialog header="创建/编辑菜品" v-model:visible="visible">
@@ -271,9 +310,9 @@
                     </div>
                     <label for="type" class="tag-font">类型</label>
                     <div class="radio-group">
-                        <RadioButton inputId="菜品" name="dish" :value="0" v-model="editingCategory.type" class="radio-item"/>
+                        <RadioButton inputId="菜品" name="dish" :value="1" v-model="editingCategory.type" class="radio-item"/>
                         <label for="dish">菜品</label>
-                        <RadioButton inputId="套餐" name="package" :value="1" v-model="editingCategory.type" class="radio-item" />
+                        <RadioButton inputId="套餐" name="package" :value="2" v-model="editingCategory.type" class="radio-item" />
                         <label for="package">套餐</label>
                     </div>
                     <div class="form-group">
@@ -282,9 +321,9 @@
                     </div>
                     <label for="type" class="tag-font">品类状态</label>
                     <div class="radio-group">
-                        <RadioButton inputId="启用" name="on" :value="1" v-model="editingCategory.status" class="radio-item"/>
+                        <RadioButton inputId="启用" name="on" :value="2" v-model="editingCategory.status" class="radio-item"/>
                         <label for="on">启用</label>
-                        <RadioButton inputId="关闭" name="off" :value="0" v-model="editingCategory.status" class="radio-item" />
+                        <RadioButton inputId="关闭" name="off" :value="1" v-model="editingCategory.status" class="radio-item" />
                         <label for="off">关闭</label>
                     </div>
                 </div>
@@ -295,9 +334,9 @@
                     </div>
                     <label for="type" class="tag-font">类型</label>
                     <div class="radio-group">
-                        <RadioButton inputId="菜品" name="dish" :value="0" v-model="newCategory.type" class="radio-item"/>
+                        <RadioButton inputId="菜品" name="dish" :value="1" v-model="newCategory.type" class="radio-item"/>
                         <label for="dish">菜品</label>
-                        <RadioButton inputId="套餐" name="package" :value="1" v-model="newCategory.type" class="radio-item" />
+                        <RadioButton inputId="套餐" name="package" :value="2" v-model="newCategory.type" class="radio-item" />
                         <label for="package">套餐</label>
                     </div>
                     <div class="form-group">
