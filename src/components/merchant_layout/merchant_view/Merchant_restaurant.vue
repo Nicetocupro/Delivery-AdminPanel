@@ -27,6 +27,9 @@ let visible = ref(false); // 控制Dialog弹窗显示
 let editingRestaurant = ref<Restaurant | null>(null); // 编辑餐厅对象
 let restaurants = ref<Restaurant[]>([]); // 餐厅列表
 let searchQuery = ref(""); // 查询输入框的值
+let descriptionVisible = ref(false);  // 控制描述弹窗的显示
+let fullDescription = ref("");  // 存储完整的描述内容
+
 
 // 新建餐厅表单数据
 let newRestaurant = ref({
@@ -171,6 +174,7 @@ const deleteRestaurant = async (restaurantId: number) => {
 
 // 修改餐厅
 const updateRestaurant = async () => {
+  console.log("updateRestaurant")
   if (editingRestaurant.value) {
     let data = new FormData();
     data.append("restaurant_name", editingRestaurant.value.restaurant_name);
@@ -256,9 +260,11 @@ const toggleRestaurantStatus = async (restaurant) => {
   }
 
   try {
+    const newStatus = restaurant.status ? 0 : 1
+    console.log(newStatus)
     // 更新状态的 API 请求
     const response = await instance.put(
-      `merchant/restaurant/${restaurant.id}/status/${restaurant.status}`
+      `merchant/restaurant/${restaurant.id}/status/${newStatus}`
     );
 
     if (response.data.ecode === 200) {
@@ -308,6 +314,19 @@ const openEditDialog = (restaurant: Restaurant) => {
   visible.value = true;
 };
 
+// 显示完整描述的方法
+const showFullDescription = (description: string) => {
+  fullDescription.value = description;
+  descriptionVisible.value = true;
+  // 打开 Dialog 显示完整描述
+  toast.add({
+    severity: "info",
+    summary: "餐厅描述",
+    detail: description,
+    life: 5000,
+  });
+};
+
 // 页面加载时获取餐厅列表
 onMounted(fetchRestaurants);
 </script>
@@ -350,7 +369,25 @@ onMounted(fetchRestaurants);
     >
       <Column field="restaurant_name" header="餐厅名称" />
       <Column field="address" header="地址" />
-      <Column field="description" header="描述" />
+      <Column header="描述">
+        <template #body="slotProps">
+          <div>
+            <span v-if="slotProps.data.description.length > 10">
+              {{ slotProps.data.description.substring(0, 10) }}...
+            </span>
+            <span v-else>
+              {{ slotProps.data.description }}
+            </span>
+            <Button
+              v-if="slotProps.data.description.length > 10"
+              label="查看"
+              icon="pi pi-eye"
+              class="p-button-text p-button-info"
+              @click="showFullDescription(slotProps.data.description)"
+            />
+          </div>
+        </template>
+      </Column>
       <Column field="minimum_delivery_amount" header="最低配送金额（元）" />
       <Column field="rating" header="评分" />
       <Column header="创建时间">
@@ -498,6 +535,10 @@ onMounted(fetchRestaurants);
         />
       </template>
     </Dialog>
+
+    <Dialog header="餐厅描述" v-model:visible="descriptionVisible">
+      <p>{{ fullDescription }}</p>
+    </Dialog>
   </div>
 </template>
 
@@ -599,5 +640,11 @@ onMounted(fetchRestaurants);
 
 .p-dialog .input-field {
   margin-top: 0.5rem;
+}
+
+/* 使省略号部分美观 */
+.p-button-text {
+  padding: 0;
+  margin-left: 10px;
 }
 </style>
