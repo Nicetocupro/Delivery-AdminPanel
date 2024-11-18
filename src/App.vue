@@ -4,14 +4,13 @@
 </script>
 
 <template>
-    <div class="app">
-        <RouterView></RouterView>
-    </div>
+    <RouterView></RouterView>
 </template>
 
-<style scoped>
+<style>
     body{
         margin : 0px;
+        background-color:#f3f4f6;
     }
 </style>
 
