@@ -223,8 +223,13 @@ const updateRestaurant = async () => {
 // 进入餐厅的函数
 const enterRestaurant = (restaurantId: number) => {
   console.log("进入餐厅:", restaurantId);
-  router.push(`/restaurant/${restaurantId}`);
+  router.push(`/restaurant/${restaurantId}/Category`);
 };
+
+// 进入菜品管理的函数
+const enterDishBoard = (restaurantId: number) => {
+  router.push(`/restaurant/${restaurantId}/DishBoard`);
+}
 
 // 定义过滤后的餐厅列表，基于 searchQuery 动态更新
 const filteredRestaurants = computed(() => {
@@ -446,6 +451,12 @@ onMounted(fetchRestaurants);
             icon="pi pi-sign-in"
             class="p-button-text p-button-info"
             @click="() => enterRestaurant(slotProps.data.id)"
+          />
+          <Button
+            label="管理菜品"
+            icon="pi pi-cart-plus"
+            class="p-button-text p-button-info"
+            @click="() => enterDishBoard(slotProps.data.id)"
           />
         </template>
       </Column>
