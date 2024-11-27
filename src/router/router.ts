@@ -53,13 +53,17 @@ const routes = [
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_restaurant.vue'),
             },
             {
-                path: '/restaurant/:restaurantID',
+                path: '/restaurant/:restaurantID/Category',
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_category.vue'),
                 props: true
             },
             {
-                path: '/flavor/:restaurantID',
+                path: '/restaurant/:restaurantID/flavor',
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_flavor.vue'),
+            },
+            {
+                path: '/restaurant/:restaurantID/Dishboard',
+                component:() => import('../components/merchant_layout/merchant_view/Merchant_DishBoard.vue'),
                 props: true
             }
         ]

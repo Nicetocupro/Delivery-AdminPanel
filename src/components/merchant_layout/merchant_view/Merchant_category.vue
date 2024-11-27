@@ -27,7 +27,7 @@
     const category_name = ref("");
     let visible = ref(false); // 控制Dialog弹窗显示
     let editingCategory = ref<Category | null>(null); // 编辑餐厅对象
-    let categories = ref<Category[]>([]); // 餐厅列表
+    let categories = ref<Category[]>([]); // 类列表
 
     const expandedRows = ref<Category[]>([]);
 
@@ -50,6 +50,7 @@
 
             if(response.data.ecode == 200){
                 if(response.data && response.data.data.categories){
+                    console.log(response.data.data.categories);
                     categories.value = response.data.data.categories;
                 }
                 else {
@@ -216,17 +217,17 @@
     };
 
     const setExpandedRow = ($event: DataTableRowClickEvent) => {
-    // 判断当前行是否已展开
-    const isExpanded = expandedRows.value.some((row: Category) => row.id === $event.data.id);
+        // 判断当前行是否已展开
+        const isExpanded = expandedRows.value.some((row: Category) => row.id === $event.data.id);
 
-    if (isExpanded) {
-        // 如果当前行已展开，则折叠它
-        expandedRows.value = expandedRows.value.filter((row: Category) => row.id !== $event.data.id);
-    } else {
-        // 如果当前行未展开，则展开它
-        expandedRows.value = [...expandedRows.value, $event.data];
-    }
-};
+        if (isExpanded) {
+            // 如果当前行已展开，则折叠它
+            expandedRows.value = expandedRows.value.filter((row: Category) => row.id !== $event.data.id);
+        } else {
+            // 如果当前行未展开，则展开它
+            expandedRows.value = [...expandedRows.value, $event.data];
+        }
+    };
 
     onMounted(fetchCategories);
 </script>
@@ -236,7 +237,7 @@
         <Toast />
 
         <div class="action-bar">
-            <!--查询输入框与查询按钮-->
+            <!--查询输入框与按钮和返回按钮-->
             <div class="search-group">
                 <input v-model="category_name" placeholder="查询品类名" class="input-field search-input"/>
                 <Button label="查询" icon="pi pi-search" class="p-button-primary search-button" @click="searchCategories" />
@@ -269,6 +270,7 @@
                     {{slotProps.data.status === 2 ? 'ON' : 'OFF'}}
                 </template>
             </Column>
+            
 
             <Column header="操作">
                 <template #body="slotProps">
@@ -283,6 +285,11 @@
                     <h5>菜品列表</h5>
                     <DataTable :value="slotProps.data.dishes" datakey="id" sortField="sort" :sortOrder="-1" responsiveLayout="scroll">
                         <Column field="name" header="菜品名称" />
+                        <Column header="菜品照片" style="max-height: 3rem; max-width: 3rem; object-fit: contain;" >
+                            <template #body="slotProps">
+                                <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" preview />
+                            </template>
+                        </Column>
                         <Column field="price" header="菜品价格" />
                         <Column field="description" header="菜品描述" />
                         <Column header="创建时间">
@@ -301,7 +308,7 @@
             </template>
         </DataTable>
 
-        <Dialog header="创建/编辑菜品" v-model:visible="visible">
+        <Dialog header="创建/编辑品类" v-model:visible="visible">
             <div class="dialog-form">
                 <div v-if="editingCategory">
                     <div class="form-group">
