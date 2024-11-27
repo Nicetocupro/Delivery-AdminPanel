@@ -19,7 +19,14 @@
         sort: number;
         created_at: number;
         updated_at: number;
+        flavors: Flavor[];
     }
+
+    interface Flavor{
+        id: number;
+        name: string;
+    } 
+
 
     // 获取传递的参数
     const props = defineProps<{restaurantID: number}>();
@@ -43,6 +50,14 @@
         description: "",
         sort: ""
     });
+
+    let Flavors = ref<Flavor[]>([]);
+
+    let flavors = ref<Flavor[]>([]);
+    let fmc_vis = ref(false);
+    let fmc2_vis = ref(false);
+    let current_flavors=ref<Flavor[]>([]);
+    let current_dishid=ref();
 
     // 格式化日期
     const formatDate = (timestamp: number): string => {
@@ -215,13 +230,15 @@
     };
 
     const updateDish = async () =>{
+        console.log("牛魔");
         if(editDish.value){
+            console.log("诗人握持");
             console.log(editDish.value);
             let data = new FormData();
             data.append("name", editDish.value.name);
             data.append("description", editDish.value.description);
             data.append("sort", editDish.value.sort.toString());
-            const priceInCents = parseFloat(newDish.value.price) * 100;
+            const priceInCents = editDish.value.price * 100;
             data.append("price", priceInCents.toString());  // 转换为字符串
             if (src.value && src.value instanceof File) {
                 data.append("image", src.value); // 将 File 对象添加到 FormData
@@ -262,11 +279,131 @@
 
     const openEditDialog = (dish: Dish) => {
         editDish.value = { ...dish };
+        console.log(editDish.value);
+        src.value = null;
+        imageUrl.value = null;
         console.log(editDish.value.id);
         edit_vis.value = true;
     };
 
+    const OpenaddFlavor = (dishID: number) => {
+        fetchFlavors();
+        console.log(dishID);
+        flavors.value = [];
+        fmc_vis.value = true;
+        current_dishid.value = dishID;
+    };
+    const addFlavor = async (dishID: number) => {
+        let data = new FormData();
+        const ids = flavors.value.map((flavor) => flavor.id);
+        for(var i=0;i<ids.length;i++){
+            data.append("flavors", ids[i].toString());
+        }
+        console.log(ids);
+        console.log(data);
+        try{
+            const response = await instance.post(`merchant/dish/${dishID}/flavors/add`, data);
+            if (response.data.ecode === 200) {
+                toast.add({
+                    severity: "success",
+                    summary: "创建成功",
+                    detail: "口味已成功添加",
+                    life: 3000,
+                });
+                fetchDishes();
+                fmc_vis.value=false;
+            }
+            else{
+                console.log(response.data);
+                toast.add({
+                    severity: "error",
+                    summary: "创建失败",
+                    detail: response.data.msg || "添加口味时出现问题。",
+                    life: 3000,
+                });
+            }
+        } catch(error) {
+            console.error("Error creating dish:", error);
+            toast.add({
+                severity: "error",
+                summary: "添加失败",
+                detail: "添加口味时出现问题",
+                life: 3000,
+            });
+        }
+    };
+
+    const OpendeleteFlavor = (dish:Dish) => {
+        flavors.value = [];
+        fmc2_vis.value = true;
+        current_dishid.value = dish.id;
+        console.log('我是傻逼');
+        console.log(flavors);
+        current_flavors.value = dish.flavors;
+        console.log(current_flavors);
+    };
+    const deleteFlavor = async (dishID: number) => {
+
+        let data = new FormData();
+        const ids = flavors.value.map((flavor) => flavor.id);
+        for(var i=0;i<ids.length;i++){
+            data.append("flavors", ids[i].toString());
+        }
+        try{
+            const response = await instance.post(`merchant/dish/${dishID}/flavors/delete`, data);
+            if (response.data.ecode === 200) {
+                toast.add({
+                    severity: "success",
+                    summary: "创建成功",
+                    detail: "口味已成功添加",
+                    life: 3000,
+                });
+                fetchDishes();
+                fmc2_vis.value=false;
+            }
+            else{
+                console.log(response.data);
+                toast.add({
+                    severity: "error",
+                    summary: "创建失败",
+                    detail: response.data.msg || "添加口味时出现问题。",
+                    life: 3000,
+                });
+            }
+        } catch(error) {
+            console.error("Error creating dish:", error);
+            toast.add({
+                severity: "error",
+                summary: "添加失败",
+                detail: "添加口味时出现问题",
+                life: 3000,
+            });
+        }
+    };
+
+    const fetchFlavors = async() => {
+        console.log("fetching flavors");
+        try{
+            const response = await instance.get(`/merchant/restaurant/${restaurantID}/flavors`);
+            if(response.data.ecode == 200){
+                if(response.data && response.data.data.flavors){
+                    console.log(response.data.data.flavors);
+                    Flavors.value = response.data.data.flavors;
+                }
+                else{
+                    console.error("No flavors data found in response:", response.data);
+                    Flavors.value = [];
+                }
+            }
+        } catch(error) {
+            console.log("ERROR fetching flavors", error.data);
+            Flavors.value = [];
+        }
+    };
+
+
     onMounted(fetchDishes);
+    onMounted(fetchFlavors);
 </script>
 
 <template>
@@ -327,10 +464,9 @@
                     <Button icon="pi pi-pencil" severity="success" class="operation-button" @click="openEditDialog(slotProps.data)" />
                     <!--删除按钮-->
                     <Button icon="pi pi-trash" severity="danger" class="operation-button" @click="deleteDish(slotProps.data.id)" />
-                    <!--口味添加-->
-                    <Button icon="pi pi-plus" severity="success" class="operation-button" />
-                    <!--口味删除-->
-                    <Button icon="pi pi-minus" severity="danger" class="operation-button" /> 
+                    <Button icon="pi pi-plus" severity="" class="operation-button" @click="OpenaddFlavor(slotProps.data.id)" />
+                    <Button icon="pi pi-minus" severity="" class="operation-button" @click="OpendeleteFlavor(slotProps.data)" />
+
                 </template>
             </Column>
         
@@ -414,6 +550,26 @@
                 <Button label="取消" icon="pi pi-times" severity="success" @click="edit_vis = false" />
                 <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="updateDish()" />
             </template>
+        </Dialog>
+
+        <Dialog header="添加口味" v-model:visible="fmc_vis">
+            <div class="flex flex-col gap-1">
+                <MultiSelect v-model="flavors" name="所有口味" :options="Flavors" optionLabel="name" filter placeholder="挑选一个或多个口味" :maxSelectedLabels="10" class="w-full sm:w-64" />
+            </div>
+            <br>
+            <Button @click="addFlavor(current_dishid)" label="添加已选口味" />
+            <p> </p>
+            <Button @click="flavors=[];fmc_vis=false" label="取消" />
+        </Dialog>
+
+        <Dialog header="删除口味" v-model:visible="fmc2_vis">
+            <div class="flex flex-col gap-1">
+                <MultiSelect v-model="flavors" name="" :options="current_flavors" optionLabel="name" filter placeholder="挑选一个或多个口味" :maxSelectedLabels="10" class="w-full sm:w-64" />
+            </div>
+            <br>
+            <Button @click="deleteFlavor(current_dishid)" label="删除已选口味" />
+            <p> </p>
+            <Button @click="flavors=[];fmc2_vis=false" label="取消" />
         </Dialog>
     </div>
 </template>
