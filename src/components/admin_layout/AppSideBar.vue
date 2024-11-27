@@ -12,6 +12,7 @@
             label:'管理商家',
             items:[
                 {label:'审核请求',icon:'pi pi-plus' ,url:base+'/applications/1'},
+                {label:'商家列表',icon:'pi pi-plus' ,url:base+'/merchants/1'},
             ]
         }
     ])

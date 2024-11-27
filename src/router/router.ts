@@ -26,17 +26,13 @@ const routes = [
                 component: () => import('../components/admin_layout/manager_views/change_password.vue')
             },
             {
-                path: 'create_merchants',
-                component: () => import('../components/admin_layout/manager_views/create_merchants.vue')
-            },
-            {
-                path: 'delete_merchants',
-                component: () => import('../components/admin_layout/manager_views/delete_merchants.vue')
-            },
-            {
                 path: 'applications/:page',
                 component: () => import('../components/admin_layout/manager_views/applications.vue')
             },
+            {
+                path: 'merchants/:page',
+                component: () => import('../components/admin_layout/manager_views/merchants.vue')
+            }
         ]
     },
     {
@@ -59,6 +55,11 @@ const routes = [
             {
                 path: '/restaurant/:restaurantID',
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_category.vue'),
+                props: true
+            },
+            {
+                path: '/flavor/:restaurantID',
+                component: () => import('../components/merchant_layout/merchant_view/Merchant_flavor.vue'),
                 props: true
             }
         ]

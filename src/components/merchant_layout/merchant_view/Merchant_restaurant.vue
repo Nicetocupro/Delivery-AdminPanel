@@ -220,6 +220,11 @@ const updateRestaurant = async () => {
   }
 };
 
+const manageFlavor = (restaurantID :number) => {
+  console.log("管理口味:",restaurantID);
+  router.push(`/flavor/${restaurantID}`);
+}
+
 // 进入餐厅的函数
 const enterRestaurant = (restaurantId: number) => {
   console.log("进入餐厅:", restaurantId);
@@ -446,6 +451,12 @@ onMounted(fetchRestaurants);
             icon="pi pi-sign-in"
             class="p-button-text p-button-info"
             @click="() => enterRestaurant(slotProps.data.id)"
+          />
+          <Button
+            label="管理口味"
+            icon="pi pi-spin pi-cog"
+            class="p-button-text p-button-info"
+            @click="() => manageFlavor(slotProps.data.id)"
           />
         </template>
       </Column>
