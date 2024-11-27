@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import Button from "primevue/button";
     import Column from "primevue/column";
+    import MultiSelect from 'primevue/multiselect';
     import DataTable, { DataTableRowClickEvent } from "primevue/datatable";
     import Dialog from "primevue/dialog";
     import { useToast } from "primevue/usetoast";
@@ -73,6 +74,7 @@
                 if(response.data && response.data.data.dishes){
                     console.log(response.data.data.dishes);
                     dishes.value = response.data.data.dishes;
+                    console.log("获取到的口味:",Flavors);
                 }
                 else{
                     console.error("No dishes data found in response:", response.data);
@@ -83,8 +85,28 @@
             console.log("ERROR fetching dishes", error.data);
             dishes.value = [];
         }
-        
     };
+
+    const fetchFlavors = async() => {
+        console.log("fetching flavors");
+        try{
+            const response = await instance.get(`/merchant/restaurant/${restaurantID}/flavors`);
+            if(response.data.ecode == 200){
+                if(response.data && response.data.data.flavors){
+                    console.log(response.data.data.flavors);
+                    Flavors.value = response.data.data.flavors;
+                }
+                else{
+                    console.error("No flavors data found in response:", response.data);
+                    Flavors.value = [];
+                }
+            }
+        } catch(error) {
+            console.log("ERROR fetching flavors", error.data);
+            Flavors.value = [];
+        }
+    };
+
 
     const searchDishes = () =>{
         toast.add({
@@ -378,26 +400,6 @@
                 detail: "添加口味时出现问题",
                 life: 3000,
             });
-        }
-    };
-
-    const fetchFlavors = async() => {
-        console.log("fetching flavors");
-        try{
-            const response = await instance.get(`/merchant/restaurant/${restaurantID}/flavors`);
-            if(response.data.ecode == 200){
-                if(response.data && response.data.data.flavors){
-                    console.log(response.data.data.flavors);
-                    Flavors.value = response.data.data.flavors;
-                }
-                else{
-                    console.error("No flavors data found in response:", response.data);
-                    Flavors.value = [];
-                }
-            }
-        } catch(error) {
-            console.log("ERROR fetching flavors", error.data);
-            Flavors.value = [];
         }
     };
 
