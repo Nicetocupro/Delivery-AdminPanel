@@ -25,12 +25,14 @@
     const props = defineProps<{restaurantID: number}>();
     const restaurantID = props.restaurantID;
     let dishes = ref<Dish[]>([]);
+    let editDish = ref<Dish | null>(null);
 
     const toast = useToast();
 
     const dish_name = ref("");
 
     let create_vis = ref(false);
+    let edit_vis = ref(false);
 
     const src = ref<File | null>(null);
     const imageUrl = ref<string | null>(null); // 用于存储转换后的 URL
@@ -212,6 +214,58 @@
         }
     };
 
+    const updateDish = async () =>{
+        if(editDish.value){
+            console.log(editDish.value);
+            let data = new FormData();
+            data.append("name", editDish.value.name);
+            data.append("description", editDish.value.description);
+            data.append("sort", editDish.value.sort.toString());
+            const priceInCents = parseFloat(newDish.value.price) * 100;
+            data.append("price", priceInCents.toString());  // 转换为字符串
+            if (src.value && src.value instanceof File) {
+                data.append("image", src.value); // 将 File 对象添加到 FormData
+            } else {
+                console.error("未选择有效的图片文件");
+            }
+
+            try{
+                const response = await instance.put(`/merchant/dish/${editDish.value?.id}`, data);
+                if(response.data.ecode == 200){
+                    toast.add({
+                        severity: "success",
+                        summary: "更新成功",
+                        detail: "菜品信息已成功更新。",
+                        life: 3000,
+                    });
+                    fetchDishes();
+                    edit_vis.value = false;
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: "更新失败",
+                        detail: response.data.msg || "更新信息时出现问题。",
+                        life: 3000,
+                    });
+                }
+            } catch(error) {
+                console.error("Error updating dish:", error);
+                toast.add({
+                    severity: "error",
+                    summary: "更新失败",
+                    detail: "更新信息时发生错误，请稍后再试。",
+                    life: 3000,
+                });
+            }
+        }
+    };
+
+    const openEditDialog = (dish: Dish) => {
+        editDish.value = { ...dish };
+        console.log(editDish.value.id);
+        edit_vis.value = true;
+    };
+
     onMounted(fetchDishes);
 </script>
 
@@ -235,7 +289,8 @@
             <Column field="description" header="菜品描述" />
             <Column header="菜品照片">
                 <template #body="slotProps">
-                    <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" style="width: 50px; height: 40px;" preview />
+                    <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" 
+                        style="width: 50px; height: 40px;" preview />
                 </template>
             </Column>
             <Column header="菜品价格">
@@ -268,8 +323,14 @@
             </Column>
             <Column header="操作">
                 <template #body="slotProps">
+                    <!--修改按钮-->
+                    <Button icon="pi pi-pencil" severity="success" class="operation-button" @click="openEditDialog(slotProps.data)" />
                     <!--删除按钮-->
                     <Button icon="pi pi-trash" severity="danger" class="operation-button" @click="deleteDish(slotProps.data.id)" />
+                    <!--口味添加-->
+                    <Button icon="pi pi-plus" severity="success" class="operation-button" />
+                    <!--口味删除-->
+                    <Button icon="pi pi-minus" severity="danger" class="operation-button" /> 
                 </template>
             </Column>
         
@@ -312,6 +373,46 @@
             <template #footer>
                 <Button label="取消" icon="pi pi-times" severity="success" @click="create_vis = false" />
                 <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="createDish()" />
+            </template>
+        </Dialog>
+
+        <Dialog header="编辑菜品" v-model:visible="edit_vis" v-if="editDish">
+            <div class="dialog-form">
+                <div class="form-group">
+                    <label for="name" class="tag-font">菜品名称</label>
+                    <input v-model="editDish.name" id="name" type="text" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label for="sort" class="tag-font">排序值</label>
+                    <input v-model="editDish.sort" id="sort" type="number" class="input-field" />
+                </div>
+                <div class="form-group">
+                    <label for="description" class="tag-font">描述</label>
+                    <input
+                        v-model="editDish.description"
+                        id="description"
+                        type="text"
+                        class="input-field"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="price" class="tag-font">价格</label>
+                    <input
+                        v-model="editDish.price"
+                        id="price"
+                        type="number"
+                        class="input-field"
+                    />
+                </div>
+                <div class="form-group">
+                    <label for="image" class="tag-font">菜品图片</label>
+                    <FileUpload mode="basic" @select="onFileSelect" customUpload auto severity="secondary" class="p-button-outlined" />
+                    <img v-if="imageUrl" :src="imageUrl" alt="Image" class="shadow-md rounded-xl w-full sm:w-64" />
+                </div>
+            </div>
+            <template #footer>
+                <Button label="取消" icon="pi pi-times" severity="success" @click="edit_vis = false" />
+                <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="updateDish()" />
             </template>
         </Dialog>
     </div>

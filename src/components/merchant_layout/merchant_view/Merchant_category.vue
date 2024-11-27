@@ -7,7 +7,7 @@
     import { computed, onMounted, ref, toValue } from "vue";
     import instance from "../../../http.js";
     import router from "../../../router/router.js";
-    import { RadioButton } from "primevue";
+    import { MultiSelect, RadioButton } from "primevue";
 
     interface Category{
         id: number;
@@ -17,17 +17,39 @@
         created_at: number;
         updated_at: number;
         sort: number;
+        dishes: Dish[]
+    };
+
+    interface Dish{
+        id: number;
+        name: string;
+        price: number;
+        description: string;
+        sort: number;
+        created_at: number;
+        updated_at: number;
     };
 
     // 获取传递的参数
     const props = defineProps<{restaurantID: number}>();
     const restaurantID = props.restaurantID;
 
+    let chosenCategory = ref();
+
     const toast = useToast();
     const category_name = ref("");
     let visible = ref(false); // 控制Dialog弹窗显示
     let editingCategory = ref<Category | null>(null); // 编辑餐厅对象
     let categories = ref<Category[]>([]); // 类列表
+
+    let addDish = ref<Dish[] | null>(null);
+    let deleteDish = ref<Dish[] | null>(null);
+    const currentDish = ref<Dish[]>([]);
+
+    const sumDishes = ref<Dish[]>([]);
+
+    let add_dish_vis = ref(false);
+    let delete_dish_vis = ref(false);
 
     const expandedRows = ref<Category[]>([]);
 
@@ -43,6 +65,26 @@
         sort: "",
         status: "1"
     });
+
+    const fetchDishes = async() => {
+        try{
+            const response = await instance.get(`/merchant/restaurant/${restaurantID}/dish`);
+
+            if(response.data.ecode == 200){
+                if(response.data && response.data.data.dishes){
+                    console.log(response.data.data.dishes);
+                    sumDishes.value = response.data.data.dishes;
+                }
+                else{
+                    console.error("No dishes data found in response:", response.data);
+                    sumDishes.value = [];
+                }
+            }
+        } catch(error) {
+            console.log("ERROR fetching dishes", error.data);
+            sumDishes.value = [];
+        }
+    };
 
     const fetchCategories = async() =>{
         try{
@@ -229,7 +271,106 @@
         }
     };
 
+    const openAddDishDialog = (categoryID : number) => {
+        chosenCategory.value = categoryID;
+
+        addDish.value = null;
+        
+        add_dish_vis.value = true;
+    };
+
+    const openDeleteDishDialog = (category : Category) => {
+        chosenCategory.value = category.id;
+
+        deleteDish.value = null;
+
+        currentDish.value = [...category.dishes]
+
+        delete_dish_vis.value = true;
+    }
+
+    const addDishes = async () => {
+        if(addDish.value){
+            console.log(addDish.value);
+            let data = new FormData();
+            const ids = addDish.value ? addDish.value.map(dish => dish.id) : [];
+            for(var i = 0; i < ids.length; i++){
+                data.append("dishes", ids[i].toString());
+            }
+            console.log(data);
+            try{
+                const response  = await instance.post(`/merchant/category/${chosenCategory.value}/dishes/add`, data);
+                if(response.data.ecode == 200){
+                    toast.add({
+                        severity: "success",
+                        summary: "更新成功",
+                        detail: "菜品信息已成功更新。",
+                        life: 3000,
+                    });
+                    fetchCategories();
+                    add_dish_vis.value = false;
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: "更新失败",
+                        detail: response.data.msg || "更新信息时出现问题。",
+                        life: 3000,
+                    });
+                }
+            } catch(error) {
+                console.error("Error updating dish:", error);
+                toast.add({
+                    severity: "error",
+                    summary: "更新失败",
+                    detail: "更新信息时发生错误，请稍后再试。",
+                    life: 3000,
+                });
+            }
+        }
+    };
+
+    const deleteDishes = async () => {
+        if(deleteDish.value){
+            console.log(deleteDish.value);
+            let data = new FormData();
+            const ids = deleteDish.value ? deleteDish.value.map(dish => dish.id) : [];
+            for(var i = 0; i < ids.length; i++){
+                data.append("dishes", ids[i].toString());
+            }
+
+            try{
+                const response  = await instance.post(`/merchant/category/${chosenCategory.value}/dishes/delete`, data);
+                if(response.data.ecode == 200){
+                    toast.add({
+                        severity: "success",
+                        summary: "更新成功",
+                        detail: "菜品信息已成功更新。",
+                        life: 3000,
+                    });
+                    fetchCategories();
+                    delete_dish_vis.value = false;
+                } else {
+                    toast.add({
+                        severity: "error",
+                        summary: "更新失败",
+                        detail: response.data.msg || "更新信息时出现问题。",
+                        life: 3000,
+                    });
+                }
+            } catch(error) {
+                console.error("Error updating dish:", error);
+                toast.add({
+                    severity: "error",
+                    summary: "更新失败",
+                    detail: "更新信息时发生错误，请稍后再试。",
+                    life: 3000,
+                });
+            }
+        }
+    };
+
     onMounted(fetchCategories);
+    onMounted(fetchDishes);
 </script>
 
 <template>
@@ -278,6 +419,10 @@
                     <Button icon="pi pi-pencil" severity="success" class="operation-button" @click="openEditDialog(slotProps.data)" />
                     <!--删除按钮-->
                     <Button icon="pi pi-trash" severity="danger" class="operation-button" @click="deleteCategory(slotProps.data.id)" />
+                    <!--添加菜-->
+                    <Button icon="pi pi-plus" severity="success" class="operation-button" @click="openAddDishDialog(slotProps.data.id)" />
+                    <!--s删除菜-->
+                    <Button icon="pi pi-minus" severity="danger" class="operation-button" @click="openDeleteDishDialog(slotProps.data)"/>
                 </template>
             </Column>
             <template #expansion="slotProps">
@@ -285,12 +430,17 @@
                     <h5>菜品列表</h5>
                     <DataTable :value="slotProps.data.dishes" datakey="id" sortField="sort" :sortOrder="-1" responsiveLayout="scroll">
                         <Column field="name" header="菜品名称" />
-                        <Column header="菜品照片" style="max-height: 3rem; max-width: 3rem; object-fit: contain;" >
+                        <Column header="照片" style="max-height: 3rem; max-width: 6rem;" >
                             <template #body="slotProps">
-                                <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" preview />
+                                <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" 
+                                    style="width: 40px; height: 40px;" preview />
                             </template>
                         </Column>
-                        <Column field="price" header="菜品价格" />
+                        <Column header="菜品价格">
+                            <template #body="slotProps">
+                                {{ slotProps.data.price / 100 }}
+                            </template>
+                        </Column>
                         <Column field="description" header="菜品描述" />
                         <Column header="创建时间">
                             <template #body="slotProps">
@@ -303,6 +453,18 @@
                             </template>
                         </Column>
                         <Column header="排序值" field="sort" />
+                        <Column header="口味">
+                            <template #body="slotProps">
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                                    <Tag 
+                                        v-for="(flavor, index) in slotProps.data.flavors"
+                                        :key="index"
+                                        :value="flavor.name"
+                                        style="margin-bottom: 4px;"
+                                    />
+                                </div>
+                            </template>
+                        </Column>
                     </DataTable>
                 </div>
             </template>
@@ -355,6 +517,28 @@
             <template #footer>
                 <Button label="取消" icon="pi pi-times" severity="success" @click="visible = false" />
                 <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="editingCategory ? updateCategory() : createCategory()" />
+            </template>
+        </Dialog>
+
+        <Dialog header="添加菜品" v-model:visible="add_dish_vis">
+            <div class="dialog-form">
+                <MultiSelect v-model="addDish" :options="sumDishes" optionLabel="name" filter placeholder="选择菜品"
+                    class="w-full md:w-80" /> 
+            </div>
+            <template #footer>
+                <Button label="取消" icon="pi pi-times" severity="success" @click="add_dish_vis = false" />
+                <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="addDishes" />
+            </template>
+        </Dialog>
+
+        <Dialog header="删除菜品" v-model:visible="delete_dish_vis">
+            <div class="dialog-form">
+                <MultiSelect v-model="deleteDish" :options="currentDish" optionLabel="name" filter placeholder="选择菜品"
+                    class="w-full md:w-80" /> 
+            </div>
+            <template #footer>
+                <Button label="取消" icon="pi pi-times" severity="success" @click="delete_dish_vis = false" />
+                <Button label="保存" icon="pi pi-check" class="p-button-primary" @click="deleteDishes" />
             </template>
         </Dialog>
     </div>

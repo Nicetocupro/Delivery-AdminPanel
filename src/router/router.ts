@@ -60,6 +60,7 @@ const routes = [
             {
                 path: '/restaurant/:restaurantID/flavor',
                 component: () => import('../components/merchant_layout/merchant_view/Merchant_flavor.vue'),
+                props: true
             },
             {
                 path: '/restaurant/:restaurantID/Dishboard',
