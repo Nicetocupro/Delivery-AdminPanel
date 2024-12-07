@@ -14,7 +14,9 @@
                 {label:'审核请求',icon:'pi pi-plus' ,url:base+'/applications/1'},
                 {label:'商家列表',icon:'pi pi-plus' ,url:base+'/merchants/1'},
             ]
-        }
+        },
+        {label:'管理评论',icon:'pi pi-receipt',url:base+'/comments'},
+        {label:'骑手审核',icon:'pi pi-receipt',url:base+'/riders'}
     ])
 
     

@@ -32,7 +32,12 @@ const routes = [
             {
                 path: 'merchants/:page',
                 component: () => import('../components/admin_layout/manager_views/merchants.vue')
-            }
+            },
+            {
+                path: 'riders',
+                component: () => import('../components/admin_layout/manager_views/riders.vue'),
+                props: true
+            },
         ]
     },
     {
@@ -81,6 +86,7 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    
     console.log('进入导航守卫');
     console.log(to);
     console.log(from);
