@@ -119,7 +119,7 @@ function arrayBufferToBase64(buffer) {
 
 async function getimage(license){
     console.log(license);
-    image = await instance.get("/admin/merchant-application/license/"+license,{
+    image = await instance.get("/admin/application/image/"+license,{
         responseType: 'arraybuffer'
     });
     const imageData = image.data;
