@@ -2,7 +2,7 @@
 import Menu from "primevue/menu";
 import { ref } from "vue";
 
-let base = "/merchant_home";
+let base = "/#/merchant_home";
 
 const items = ref([
   { label: "Home", icon: "pi pi-home", url: base },
