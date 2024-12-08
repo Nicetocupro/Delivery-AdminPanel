@@ -260,7 +260,7 @@
             data.append("name", editDish.value.name);
             data.append("description", editDish.value.description);
             data.append("sort", editDish.value.sort.toString());
-            const priceInCents = editDish.value.price * 100;
+            const priceInCents = editDish.value.price;
             data.append("price", priceInCents.toString());  // 转换为字符串
             if (src.value && src.value instanceof File) {
                 data.append("image", src.value); // 将 File 对象添加到 FormData
@@ -428,7 +428,7 @@
             <Column field="description" header="菜品描述" />
             <Column header="菜品照片">
                 <template #body="slotProps">
-                    <Image :src="`https://localhost/api/v1/merchant/dish/image/${slotProps.data.image}`" 
+                    <Image :src="`https://www.xiaoqingyanxuan.top/api/v1/merchant/dish/image/${slotProps.data.image}`" 
                         style="width: 50px; height: 40px;" preview />
                 </template>
             </Column>

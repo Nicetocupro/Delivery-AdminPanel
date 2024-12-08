@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Login from '../components/Login.vue';
 import Admin_Home from '../components/admin_layout/Home.vue';
 import Merchant_Home from '../components/merchant_layout/Merchant_Home.vue';
@@ -34,10 +34,15 @@ const routes = [
                 component: () => import('../components/admin_layout/manager_views/merchants.vue')
             },
             {
+                path: 'orders/:page',
+                component: () => import('../components/admin_layout/manager_views/orders.vue'),
+                props: true
+            },
+            {
                 path: 'riders',
                 component: () => import('../components/admin_layout/manager_views/riders.vue'),
                 props: true
-            },
+            }
         ]
     },
     {
@@ -81,15 +86,12 @@ const routes = [
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes,
 });
 
 router.beforeEach(async (to, from, next) => {
-    
-    console.log('进入导航守卫');
-    console.log(to);
-    console.log(from);
+    console.log('进入导航守卫',from,to);
     
     // 如果目标路径是 '/login' 页面
     if (to.path === '/login') {

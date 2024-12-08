@@ -1,28 +1,34 @@
 <template>
 
-    <DataTable :value="applications" tableStyle="min-width: 50rem" v-if="visible" paginator :rows="5">
+    <DataTable :value="applications" tableStyle="min-width: 50rem" v-if="visible" paginator :rows="5" stateStorage="session" stateKey="dt-state-demo-session">
         <Column field="student_name" header="姓名"></Column>
         <Column field="student_no" header="学号"></Column>
         
-        <Column field="student_card" header="校园卡"></Column>
+
+        <Column header="校园卡" style="max-height: 3rem; max-width: 6rem;" >
+            <template #body="slotProps">
+                <Image :src="`https://www.xiaoqingyanxuan.top/api/v1/admin/application/image/${slotProps.data.student_card}`" 
+                    style="width: 40px; height: 40px;" preview />
+            </template>
+        </Column>
 
         <Column header="审核状态">
             <template #body="{ data }">
-                <p v-if="data.status==1" style="color:red">已拒绝</p>
-                <p v-if="data.status==2" style="color:black">未审核</p>
-                <p v-if="data.status==3" style="color:green">已通过</p>
+                <p v-if="data.status==1" style="color:red">待审核</p>
+                <p v-if="data.status==2" style="color:black">已通过</p>
+                <p v-if="data.status==3" style="color:green">未通过</p>
             </template>
         </Column>
 
 
         <Column class="w-24 !text-end" header="通过审核">
             <template #body="{ data }">
-                <Button icon="pi pi-check" @click="approve(data.id)" severity="secondary" rounded v-if="data.status!=3"></Button>
+                <Button icon="pi pi-check" @click="approve(data.id)" severity="secondary" rounded v-if="data.status!=2"></Button>
             </template>
         </Column>
         <Column class="w-24 !text-end" header="拒绝审核">
             <template #body="{ data }">
-                <Button icon="pi pi-times" @click="disapprove(data.id)" severity="secondary" rounded v-if="data.status!=3&&data.status!=1"></Button>
+                <Button icon="pi pi-times" @click="disapprove(data.id)" severity="secondary" rounded v-if="data.status!=2&&data.status!=3"></Button>
             </template>
         </Column>
 
@@ -40,7 +46,7 @@
 
     </DataTable>
 
-
+    
 </template>
   
 <script setup>
@@ -55,7 +61,8 @@ import router from '../../../router/router';
 var route = useRoute()
 
 var applications = ref([])
-var visible = ref(false)    
+var visible = ref(false)
+var session = ref()    
 
 onMounted(fetchData);
 
@@ -82,6 +89,7 @@ async function approve(id){
         const response = await instance.put("/admin/rider-application/"+id+"/approve");
         console.log(response);
         alert("申请成功通过");
+        fetchData();
     } catch (error) {
         console.error("获取数据失败", error);
     }
@@ -95,6 +103,7 @@ async function disapprove(id){
         const response = await instance.put("/admin/rider-application/"+id+"/disapprove");
         console.log(response);
         alert("成功拒绝申请");
+        fetchData();
     } catch (error) {
         console.error("获取数据失败", error);
     }

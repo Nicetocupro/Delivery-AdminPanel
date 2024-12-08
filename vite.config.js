@@ -5,6 +5,7 @@ import {PrimeVueResolver} from '@primevue/auto-import-resolver';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "./",
   server: {
     host: "0.0.0.0",
     watch: {

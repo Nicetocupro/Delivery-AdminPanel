@@ -2,7 +2,7 @@
     import Menu from 'primevue/menu'
     import {ref} from 'vue'
 
-    let base = '/admin_home'
+    let base = '/#/admin_home'
 
     const items=ref([
         {label:'Home'         ,icon:'pi pi-home',url:base+'/index'},
@@ -15,7 +15,7 @@
                 {label:'商家列表',icon:'pi pi-plus' ,url:base+'/merchants/1'},
             ]
         },
-        {label:'管理评论',icon:'pi pi-receipt',url:base+'/comments'},
+        {label:'订单管理',icon:'pi pi-receipt',url:base+'/orders/1'},
         {label:'骑手审核',icon:'pi pi-receipt',url:base+'/riders'}
     ])
 
