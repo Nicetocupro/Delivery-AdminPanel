@@ -78,7 +78,7 @@ async function try_login() {
     <div class="screen">
       <div class="screen__content">
         <form class="login">
-          <h3 class="login_header">管理员登录</h3>
+          <h3 class="login_header">登录</h3>
 
           <div class="login__field">
             <IftaLabel>

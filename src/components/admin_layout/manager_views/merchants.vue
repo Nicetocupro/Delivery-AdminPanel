@@ -1,42 +1,29 @@
 <template>
 
-    <DataTable :value="applications" tableStyle="min-width: 50rem" v-if="visible">
-        <Column field="id" header="申请ID"></Column>
-        <Column field="name" header="商家名称"></Column>
+    <DataTable :value="merchants" tableStyle="min-width: 50rem" v-if="visible">
+        <Column field="account" header="账号"></Column>
         
         <Column field="phone_number" header="电话"></Column>
-        <Column field="email" header="邮箱"></Column>
+        <Column field="merchant_name" header="商家姓名"></Column>
+        <Column field="merchant_application_id" header="申请ID"></Column>
 
-        <Column header="审核状态">
-            <template #body="{ data }">
-                <p v-if="data.status==1" style="color:red">已拒绝</p>
-                <p v-if="data.status==2" style="color:black">未审核</p>
-                <p v-if="data.status==3" style="color:green">已通过</p>
-            </template>
-        </Column>
 
-        <Column header="邮件状态">
+        <Column header="状态">
             <template #body="{ data }">
-                <p v-if="data.email_status==0" style="color:cyan">未发送</p>
-                <p v-if="data.email_status==1" style="color:green">已发送</p>
-                <p v-if="data.email_status==2" style="color:red">发送错误</p>
+                <p v-if="data.status==0" style="color:red">已禁用</p>
+                <p v-if="data.status==1" style="color:green">已启用</p>
             </template>
         </Column>
 
 
-        <Column class="w-24 !text-end" header="通过审核">
+        <Column class="w-24 !text-end" header="启用">
             <template #body="{ data }">
-                <Button icon="pi pi-check" @click="approve(data.id)" severity="secondary" rounded v-if="data.status!=3"></Button>
+                <Button icon="pi pi-check" @click="enable(data.id)" severity="secondary" rounded></Button>
             </template>
         </Column>
-        <Column class="w-24 !text-end" header="拒绝审核">
+        <Column class="w-24 !text-end" header="禁用">
             <template #body="{ data }">
-                <Button icon="pi pi-times" @click="disapprove(data.id)" severity="secondary" rounded v-if="data.status!=3&&data.status!=1"></Button>
-            </template>
-        </Column>
-        <Column class="w-24 !text-end" header="商家证书">
-            <template #body="{ data }">
-                <Button icon="pi pi-search" @click="getimage(data.license)" severity="secondary" rounded></Button>
+                <Button icon="pi pi-times" @click="disable(data.id)" severity="secondary" rounded></Button>
             </template>
         </Column>
 
@@ -52,17 +39,16 @@
             </template>
         </Column>
 
-        <Column field="description" header="描述信息"></Column>
     </DataTable>
 
     <Dialog v-model:visible="vis" modal header="商家证书" :style="{ width: '75rem' }">
         <img :src="imagesrc" alt="License Image">
     </Dialog>
 
-    <router-link :to="'/admin_home/merchants/'+(Number(route.params.page)-1)">
+    <router-link :to="'/admin_home/applications/'+(Number(route.params.page)-1)">
         <Button>上一页</Button>
     </router-link>
-    <router-link :to="'/admin_home/merchants/'+(Number(route.params.page)+1)">
+    <router-link :to="'/admin_home/applications/'+(Number(route.params.page)+1)">
         <Button>下一页</Button>
     </router-link>
 
@@ -79,7 +65,7 @@ import router from '../../../router/router';
 
 var route = useRoute()
 
-var applications = ref([])
+var merchants = ref([])
 var image = ref()
 var imagesrc = ref()
 var vis = ref(false)
@@ -93,11 +79,11 @@ async function fetchData(page) {
 
     try {
         visible.value = false
-        const response = await instance.get("/admin/merchant-application/" + page);
-        applications = response.data.data.applications;
+        const response = await instance.get("/admin/merchants/" + page);
+        merchants = response.data.data.merchants;
         visible.value = true
         console.log("信息");
-        console.log(applications);
+        console.log(merchants);
     } catch (error) {
         console.error("获取数据失败", error);
         router.push('/admin_home')
@@ -119,7 +105,7 @@ function arrayBufferToBase64(buffer) {
 
 async function getimage(license){
     console.log(license);
-    image = await instance.get("/admin/application/image/"+license,{
+    image = await instance.get("/admin/merchant-application/license/"+license,{
         responseType: 'arraybuffer'
     });
     const imageData = image.data;
@@ -128,28 +114,25 @@ async function getimage(license){
     vis.value = true
 }
 
-async function approve(id){
-    // /admin/merchant-application/{application_id}/approve
-
-    console.log(id+'尝试申请通过');
+async function enable(id){
+    //dev-cn.your-api-server.com/api/v1/admin/merchant/{merchant_id}/enable
+    console.log(id+'尝试启用');
     try {
-        const response = await instance.put("/admin/merchant-application/"+id+"/approve");
+        const response = await instance.post("/admin/merchant/"+id+"/enable");
         console.log(response);
-        alert("申请成功通过");
+        alert("启用成功");
         fetchData(route.params.page)
     } catch (error) {
         console.error("获取数据失败", error);
     }
 }
 
-async function disapprove(id){
-    // /admin/merchant-application/{application_id}/disapprove
-
-    console.log(id+'尝试申请通过');
+async function disable(id){
+    //dev-cn.your-api-server.com/api/v1/admin/merchant/{merchant_id}/disable
     try {
-        const response = await instance.put("/admin/merchant-application/"+id+"/disapprove");
+        const response = await instance.post("/admin/merchant/"+id+"/disable");
         console.log(response);
-        alert("成功拒绝申请");
+        alert("成功禁用");
         fetchData(route.params.page)
     } catch (error) {
         console.error("获取数据失败", error);
