@@ -13,7 +13,8 @@
                 <p v-if="data.status==1" style="color:black">等待抢单</p>
                 <p v-if="data.status==2" style="color:blue">待骑手取餐</p>
                 <p v-if="data.status==3" style="color:green">等待送达</p>
-                <p v-if="data.status==4" style="color:brown">订单被取消</p>
+                <p v-if="data.status==4" style="color:green">已送达</p>
+                <p v-if="data.status==5" style="color:brown">订单被取消</p>
             </template>
         </Column>
 
@@ -75,7 +76,8 @@ const opts = ref([
     { name: '等待抢单', code: 1 },
     { name: '待骑手取餐', code: 2 },
     { name: '等待送达', code: 3 },
-    { name: '订单被取消', code: 4 }
+    { name: '已送达', code: 4 },
+    { name: '订单被取消', code: 5 }
 ]);
 
 // 侦听路由的参数，以便再次获取数据
